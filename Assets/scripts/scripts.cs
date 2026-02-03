@@ -13,6 +13,10 @@ public class scripts : MonoBehaviour
     private float facing = 1; //1 = right, -1 left
     private bool isGrounded;
 
+    public Transform groundCheckPos;
+    float groundCheckLength = 0.25f;
+    public LayerMask groundCheckLayerMask;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -36,7 +40,7 @@ public class scripts : MonoBehaviour
             facing = 1;
         }
 
-        else if (inputX <0)
+        else if (inputX < 0)
         {
             facing = -1;
         }
@@ -46,7 +50,7 @@ public class scripts : MonoBehaviour
         {
             spriteRenderer.flipX = false;
         }
-        else if(facing < 0.01f)
+        else if (facing < 0.01f)
         {
             spriteRenderer.flipX = true;
         }
@@ -56,20 +60,33 @@ public class scripts : MonoBehaviour
 
         //}
 
+        RaycastHit2D hit = (Physics2D.Raycast(groundCheckPos.position, Vector2.down, groundCheckLength, groundCheckLayerMask));
+        if (hit.collider != null)
+        {
+            isGrounded = true;
 
+        }
+        else
+        {
+            isGrounded = false;
 
+        }
+        if (Input.GetButtonDown("Jump")&& isGrounded)
+        {
+            rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
 
-        //if (Input.GetButtonDown("Jump"))
-        //{
-        //    rigidBody.AddForce(Vector2)
-        //}
+        if (animator)
+        {
+            animator.SetFloat("moveX", Mathf.Abs(rigidBody.linearVelocityX));
+        }
 
     }
 
     private void FixedUpdate()
     {
         rigidBody.linearVelocityX = inputX * moveSpeed;
-        // rigidBody.linearVelocityX = new Vector2(input.
+        
     }
 
 }
